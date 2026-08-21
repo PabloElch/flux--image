@@ -1,39 +1,23 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="My Free AI Video Hub", page_icon="🎬", layout="centered"
+    page_title="Wan 2.1 Free Video App", page_icon="🎬", layout="wide"
 )
 
-st.title("🎬 My Free AI Video Hub")
+st.title("🎬 Wan 2.1 Video Generator (Free Edition)")
 st.write(
-    "Access open-source video models completely for free via public web spaces."
+    "Your custom Streamlit interface connected directly to free public"
+    " generation spaces."
 )
 
-# Create tabs for different free public engines
-tab1, tab2 = st.tabs(["Wan 2.1 Space", "LTX Video Space"])
+# Create a clean layout with direct access to the free public space
+st.info(
+    "💡 Note: Cloud video APIs charge for GPU time. This app uses the official"
+    " free public web interface embedded directly below so you never spend a"
+    " dime."
+)
 
-with tab1:
-  st.subheader("Wan 2.1 Official Community Space")
-  st.write(
-    "Alibaba's Wan 2.1 hosted publicly on Hugging Face with free browser"
-    " execution."
-  )
-  st.markdown(
-      "[👉 Open Official Wan 2.1 Space in New"
-      " Tab](https://huggingface.co/spaces/Wan-AI/Wan2.1)"
-  )
-
-  # You can embed the space directly into your Streamlit layout using an iframe component
-  st.components.v1.iframe(
-      "https://huggingface.co/spaces/Wan-AI/Wan2.1", height=700, scrolling=True
-  )
-
-with tab2:
-  st.subheader("LTX Video Fast Generator")
-  st.write(
-      "An alternative open-weights high-speed video model running on free public"
-      " infrastructure."
-  )
-  st.markdown(
-      "[👉 Open LTX Video Space](https://huggingface.co/spaces/Lightricks/LTX-Video)"
-  )
+# Embed the official free public Hugging Face Space via iframe
+st.components.v1.iframe(
+    "https://huggingface.co/spaces/Wan-AI/Wan2.1", height=800, scrolling=True
+)
