@@ -33,9 +33,7 @@ if st.button("Generate Image", type="primary"):
   if not prompt.strip():
     st.warning("Please type a prompt first.")
   else:
-    with st.spinner(
-        "Rendering high-quality image with FLUX... Please wait."
-    ):
+    with st.spinner("Rendering high-quality image... Please wait."):
       try:
         # Set dimensions based on user choice
         if "Landscape" in aspect_ratio:
@@ -49,18 +47,36 @@ if st.button("Generate Image", type="primary"):
         # Build URL with enhanced quality parameters
         image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
 
-        # 1. Preview the image directly using the URL string (No BytesIO errors!)
-        st.success("Done!")
-        st.image(image_url, caption=prompt, use_container_width=True)
-
-        # 2. Fetch the bytes specifically for the download button action
+        # Fetch the image bytes directly to ensure we have the real file data ready
         response = requests.get(image_url)
-        if response.status_code == 200:
-          st.download_button(
-              label="📥 Download Image",
-              data=response.content,
-              file_name="generated_flux_image.jpg",
-              mime="image/jpeg",
+
+        if response.status_code == 200 and len(response.content) > 1000:
+          # Save bytes into session state so it persists reliably
+          st.session_state["image_bytes"] = response.content
+          st.session_state["image_prompt"] = prompt
+        else:
+          st.error(
+              "Generation is taking longer than usual or returned an empty"
+              " file. Please try clicking generate again."
           )
+
       except Exception as e:
         st.error(f"An error occurred: {e}")
+
+# Display image and download button if available in session state
+if "image_bytes" in st.session_state:
+  st.success("Done!")
+  # 1. Preview the image safely from local bytes
+  st.image(
+      st.session_state["image_bytes"],
+      caption=st.session_state["image_prompt"],
+      use_container_width=True,
+  )
+
+  # 2. Download button utilizing the verified local bytes
+  st.download_button(
+      label="📥 Download Image",
+      data=st.session_state["image_bytes"],
+      file_name="lenchxo_flux_image.jpg",
+      mime="image/jpeg",
+  )
