@@ -28,20 +28,15 @@ if st.button("Generate Image", type="primary"):
 
     # Save to session state so it stays on screen
     st.session_state["image_url"] = image_url
-    st.session_state["image_prompt"] = prompt
 
-# Display image and native download button if available
+# Display image and prominent download button if available
 if "image_url" in st.session_state:
   st.success("Done!")
 
-  # 1. Preview the image natively and smoothly
-  st.image(
-      st.session_state["image_url"],
-      caption=st.session_state["image_prompt"],
-      use_container_width=True,
-  )
+  # 1. Preview the image natively without the caption below it
+  st.image(st.session_state["image_url"], use_container_width=True)
 
-  # 2. Native click-and-download button
+  # 2. Large, prominent click-and-download button
   try:
     response = requests.get(st.session_state["image_url"], timeout=10)
     if response.status_code == 200 and len(response.content) > 1000:
@@ -50,6 +45,7 @@ if "image_url" in st.session_state:
           data=response.content,
           file_name="lenchxo_flux_image.jpg",
           mime="image/jpeg",
+          use_container_width=True,
       )
   except Exception:
     st.warning(
