@@ -5,30 +5,47 @@ import streamlit as st
 st.set_page_config(page_title="Lenchxos Image Generator", page_icon="🎨")
 
 st.title("🎨 Lenchxos Image Generator")
-st.write("Type your prompt below and generate high-quality open-source images.")
+st.write("Type your prompt below to generate high-resolution FLUX images.")
 
 # User prompt input text box
 prompt = st.text_area(
     "What do you want to see?",
-    "A cute red panda wearing a tiny astronaut helmet, digital art",
+    (
+        "A hyper-realistic cinematic shot of a futuristic cyberpunk street"
+        " market at night, neon reflections in puddles, 8k resolution"
+    ),
 )
 
-# Generate button
+# Optional quality settings in an expander
+with st.expander("Advanced Quality Settings"):
+  aspect_ratio = st.selectbox(
+      "Aspect Ratio", ["Square (1024x1024)", "Landscape (1280x720)"]
+  )
+  auto_enhance = st.checkbox(
+      "Auto-Enhance Prompt for Better Details", value=True
+  )
+
 if st.button("Generate Image", type="primary"):
   if not prompt.strip():
     st.warning("Please type a prompt first.")
   else:
     with st.spinner(
-        "Generating image with FLUX.1 Schnell... Please wait."
+        "Rendering high-quality image with FLUX... Please wait."
     ):
       try:
-        # Encode the prompt safely for the URL query string
+        # Set dimensions based on user choice
+        if "Landscape" in aspect_ratio:
+          w, h = 1280, 720
+        else:
+          w, h = 1024, 1024
+
+        # Encode prompt safely
         encoded_prompt = urllib.parse.quote(prompt)
 
-        # Direct, reliable URL generation endpoint using FLUX
-        image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width=1024&height=1024"
+        # Build URL with enhanced quality parameters
+        image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
 
-        # Display the result
+        # Display result
         st.success("Done!")
         st.image(image_url, caption=prompt, use_container_width=True)
 
