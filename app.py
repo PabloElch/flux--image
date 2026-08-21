@@ -8,7 +8,7 @@ st.title("🎨 Lenchxos Image Generator")
 st.write("Type your prompt below and generate high-quality open-source images.")
 
 # Hardcoded token in the backend (no prompts or sidebars required)
-HF_TOKEN = "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"
+HF_TOKEN = "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"
 
 # User prompt input text box
 prompt = st.text_area(
@@ -23,8 +23,8 @@ if st.button("Generate Image", type="primary"):
   else:
     with st.spinner("Generating image with FLUX.1 Schnell... Please wait."):
       try:
-        # Initialize the API client using your backend token
-        client = InferenceClient(provider="auto", api_key=HF_TOKEN)
+        # Initialize the API client using fal-ai provider for FLUX
+        client = InferenceClient(provider="fal-ai", api_key=HF_TOKEN)
 
         # Request the image from FLUX.1 Schnell
         image = client.text_to_image(
