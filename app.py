@@ -1,5 +1,6 @@
 import io
 import urllib.parse
+from PIL import Image
 import requests
 import streamlit as st
 
@@ -50,31 +51,37 @@ if st.button("Generate Image", type="primary"):
         # Build URL with enhanced quality parameters
         image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
 
-        # Fetch the raw bytes safely from the API
+        # Test-fetch and verify it's a real image before storing in session state
         response = requests.get(image_url)
+        if response.status_code == 200:
+          # Verify that PIL can actually open it as an image (prevents HTML/error crashes)
+          img_check = Image.open(io.BytesIO(response.content))
+          img_check.verify()  # Validates file integrity
 
-        if response.status_code == 200 and len(response.content) > 500:
-          # Save bytes into session state so it displays and downloads cleanly
+          # If valid, save into session state
           st.session_state["image_bytes"] = response.content
           st.session_state["image_prompt"] = prompt
         else:
-          st.error("Failed to generate image bytes. Please try again.")
+          st.error("Server returned an error. Please try again.")
 
       except Exception as e:
-        st.error(f"An error occurred: {e}")
+        st.error(
+            "Generation is still processing on the server or returned an"
+            " invalid format. Please click generate again!"
+        )
 
-# If we have generated image bytes stored, display preview and download button
+# Display image preview and download button if successfully verified and stored
 if "image_bytes" in st.session_state:
   st.success("Done!")
 
-  # 1. Preview the image natively inside the app using bytes
+  # 1. Preview the image safely
   st.image(
       st.session_state["image_bytes"],
       caption=st.session_state["image_prompt"],
       use_container_width=True,
   )
 
-  # 2. Download button that serves a real working JPEG file
+  # 2. Download button for the verified bytes
   st.download_button(
       label="📥 Download Image",
       data=st.session_state["image_bytes"],
