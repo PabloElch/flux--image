@@ -4,17 +4,16 @@ st.set_page_config(
     page_title="Wan 2.1 Free Video App", page_icon="🎬", layout="wide"
 )
 
-st.title("🎬 Wan 2.1 Video Generator (Free Edition)")
+st.title("🎬 Wan 2.1 Video Generator (100% Free Edition)")
 st.write(
-    "Your custom Streamlit interface connected directly to free public"
-    " generation spaces."
+    "Your custom Streamlit frontend linked directly to free public generation"
+    " spaces."
 )
 
-# Create a clean layout with direct access to the free public space
 st.info(
-    "💡 Note: Cloud video APIs charge for GPU time. This app uses the official"
-    " free public web interface embedded directly below so you never spend a"
-    " dime."
+    "💡 Note: Cloud video APIs charge for GPU time and require paid credits."
+    " This app embeds the official free public web workspace below so you can"
+    " generate videos without spending any money."
 )
 
 # Embed the official free public Hugging Face Space via iframe
