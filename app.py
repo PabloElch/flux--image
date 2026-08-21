@@ -1,18 +1,23 @@
+import io
 import urllib.parse
+import requests
 import streamlit as st
 
 # Page configuration
 st.set_page_config(page_title="Lenchxos Image Generator", page_icon="🎨")
 
 st.title("🎨 Lenchxos Image Generator")
-st.write("Type your prompt below to generate high-resolution FLUX images.")
+st.write(
+    "Type your prompt below to generate and download high-resolution FLUX"
+    " images."
+)
 
 # User prompt input text box
 prompt = st.text_area(
     "What do you want to see?",
     (
-        "A hyper-realistic cinematic shot of a futuristic cyberpunk street"
-        " market at night, neon reflections in puddles, 8k resolution"
+        "A cute red panda wearing a tiny astronaut helmet, digital art, 8k"
+        " resolution"
     ),
 )
 
@@ -45,9 +50,24 @@ if st.button("Generate Image", type="primary"):
         # Build URL with enhanced quality parameters
         image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
 
-        # Display result
-        st.success("Done!")
-        st.image(image_url, caption=prompt, use_container_width=True)
+        # Fetch image bytes from the URL so we can display and download it cleanly
+        response = requests.get(image_url)
+        if response.status_code == 200:
+          image_bytes = response.content
+
+          # Display result
+          st.success("Done!")
+          st.image(image_bytes, caption=prompt, use_container_width=True)
+
+          # Add Download Button
+          st.download_button(
+              label="📥 Download Image",
+              data=image_bytes,
+              file_name="generated_flux_image.jpg",
+              mime="image/jpeg",
+          )
+        else:
+          st.error("Failed to fetch the image. Please try again.")
 
       except Exception as e:
         st.error(f"An error occurred: {e}")
