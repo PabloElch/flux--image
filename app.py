@@ -1,4 +1,6 @@
+import io
 import urllib.parse
+import requests
 import streamlit as st
 
 # Page configuration
@@ -48,27 +50,34 @@ if st.button("Generate Image", type="primary"):
         # Build URL with enhanced quality parameters
         image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
 
-        # Save URL in session state so it renders stably
-        st.session_state["image_url"] = image_url
-        st.session_state["image_prompt"] = prompt
+        # Fetch the raw bytes safely from the API
+        response = requests.get(image_url)
+
+        if response.status_code == 200 and len(response.content) > 500:
+          # Save bytes into session state so it displays and downloads cleanly
+          st.session_state["image_bytes"] = response.content
+          st.session_state["image_prompt"] = prompt
+        else:
+          st.error("Failed to generate image bytes. Please try again.")
 
       except Exception as e:
         st.error(f"An error occurred: {e}")
 
-# Display image preview and direct download link if available
-if "image_url" in st.session_state:
+# If we have generated image bytes stored, display preview and download button
+if "image_bytes" in st.session_state:
   st.success("Done!")
 
-  # 1. Preview directly via URL string (No BytesIO crashing errors)
+  # 1. Preview the image natively inside the app using bytes
   st.image(
-      st.session_state["image_url"],
+      st.session_state["image_bytes"],
       caption=st.session_state["image_prompt"],
       use_container_width=True,
   )
 
-  # 2. Provide a clean link to open and save the full image safely
-  st.markdown(
-      f"📥 **[Click Here to Open & Download Full-Res"
-      f" Image]({st.session_state['image_url']})** (Right-click and select 'Save"
-      " image as...')"
+  # 2. Download button that serves a real working JPEG file
+  st.download_button(
+      label="📥 Download Image",
+      data=st.session_state["image_bytes"],
+      file_name="lenchxo_flux_image.jpg",
+      mime="image/jpeg",
   )
