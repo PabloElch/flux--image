@@ -1,4 +1,5 @@
 import urllib.parse
+import requests
 import streamlit as st
 
 # Page configuration
@@ -10,7 +11,7 @@ st.write(
     " images instantly."
 )
 
-# User prompt input text box (starts completely empty)
+# User prompt input text box
 prompt = st.text_area(
     "What do you want to see?",
     value="",
@@ -29,7 +30,7 @@ if st.button("Generate Image", type="primary"):
     st.session_state["image_url"] = image_url
     st.session_state["image_prompt"] = prompt
 
-# Display image and download options if available
+# Display image and native download button if available
 if "image_url" in st.session_state:
   st.success("Done!")
 
@@ -40,12 +41,18 @@ if "image_url" in st.session_state:
       use_container_width=True,
   )
 
-  # 2. Clean download instructions
-  st.markdown(
-      f"👉 **[Click Here to Open Full-Res"
-      f" Image]({st.session_state['image_url']})**"
-  )
-  st.info(
-      "Tip: Click the link above to open the clean image file, then right-click"
-      " and select **'Save image as...'** to save it to your device."
-  )
+  # 2. Native click-and-download button
+  try:
+    response = requests.get(st.session_state["image_url"], timeout=10)
+    if response.status_code == 200 and len(response.content) > 1000:
+      st.download_button(
+          label="📥 Download Image",
+          data=response.content,
+          file_name="lenchxo_flux_image.jpg",
+          mime="image/jpeg",
+      )
+  except Exception:
+    st.warning(
+        "Could not load download button automatically. Try refreshing or"
+        " generating again."
+    )
