@@ -1,33 +1,22 @@
-import urllib.parse
 import streamlit as st
 
 st.set_page_config(
-    page_title="Custom Free Video Generator", page_icon="🎬", layout="centered"
+    page_title="Wan 2.1 Custom Video App", page_icon="🎬", layout="wide"
 )
 
-st.title("🎬 Custom AI Video Generator")
-st.write("Generate videos instantly through direct URL endpoints—no keys needed.")
-
-prompt = st.text_area(
-    "Enter your video prompt:",
-    placeholder="A cinematic drone shot over a mountain valley at sunrise...",
+st.title("🎬 Wan 2.1 Video Generator (Custom UI)")
+st.write(
+    "Your custom Streamlit control panel connected to free public generation"
+    " nodes."
 )
 
-if st.button("Generate Video", type="primary"):
-  if not prompt.strip():
-    st.warning("Please enter a prompt first.")
-  else:
-    with st.spinner("Requesting video generation... (This may take a moment)"):
-      # URL-encode the user prompt safely
-      encoded_prompt = urllib.parse.quote(prompt)
+st.info(
+    "💡 Note: This approach gives you your own custom-styled web app while"
+    " entirely bypassing paid API tokens, serverless key limits, and 402"
+    " payment errors."
+)
 
-      # Construct the direct media endpoint URL
-      # (Using the free generation endpoint path pattern)
-      video_url = f"https://gen.pollinations.ai/video/{encoded_prompt}"
-
-      st.success("Video request processed!")
-
-      # Render the video directly from the returned media stream/URL
-      st.video(video_url)
-
-      st.markdown(f"**Direct Media URL:** [Open Video Link]({video_url})")
+# Embed the official free public Hugging Face Space securely via iframe
+st.components.v1.iframe(
+    "https://huggingface.co/spaces/Wan-AI/Wan2.1", height=800, scrolling=True
+)
