@@ -189,3 +189,14 @@ with output_col:
         """,
         unsafe_allow_html=True,
     )
+      # Sleek Footer Section
+st.markdown(
+    """
+    <hr style='margin-top: 50px; margin-bottom: 20px; border-color: #e2e8f0;'>
+    <div style='display: flex; justify-content: space-between; align-items: center; color: #64748b; font-size: 13px; padding-bottom: 20px;'>
+        <div>Built by <span style='color: #0f172a; font-weight: 600;'>Lencho Lemessa</span></div>
+        <div>Powered by FLUX.1 AI Engine</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
