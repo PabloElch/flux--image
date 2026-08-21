@@ -91,7 +91,7 @@ with col_badge:
       "<div"
       " style='background:#e0e7ff; color:#4338ca; padding:6px 12px;"
       " border-radius:20px; font-size:12px; font-weight:600; text-align:center;"
-      " border:1px solid #c7d2fe;'>FLUX.1</div>",
+      " border:1px solid #c7d2fe;'>By Lencho Lemessa</div>",
       unsafe_allow_html=True,
   )
 
