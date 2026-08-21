@@ -10,20 +10,18 @@ st.write(
     " images instantly."
 )
 
-# User prompt input text box
+# User prompt input text box (starts completely empty)
 prompt = st.text_area(
     "What do you want to see?",
-    (
-        "A cute red panda wearing a tiny astronaut helmet, digital art, 8k"
-        " resolution"
-    ),
+    value="",
+    placeholder="Type your creative prompt here...",
 )
 
 if st.button("Generate Image", type="primary"):
   if not prompt.strip():
     st.warning("Please type a prompt first.")
   else:
-    # Encode prompt safely for the URL (defaulting to clean 1024x1024 with enhance enabled)
+    # Encode prompt safely for the URL
     encoded_prompt = urllib.parse.quote(prompt)
     image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?model=flux&width=1024&height=1024&enhance=true"
 
