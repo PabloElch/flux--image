@@ -1,7 +1,4 @@
-import io
 import urllib.parse
-from PIL import Image
-import requests
 import streamlit as st
 
 # Page configuration
@@ -9,8 +6,8 @@ st.set_page_config(page_title="Lenchxos Image Generator", page_icon="🎨")
 
 st.title("🎨 Lenchxos Image Generator")
 st.write(
-    "Type your prompt below to generate, preview, and download high-resolution"
-    " FLUX images."
+    "Type your prompt below to generate and view high-resolution FLUX"
+    " images instantly."
 )
 
 # User prompt input text box
@@ -35,56 +32,41 @@ if st.button("Generate Image", type="primary"):
   if not prompt.strip():
     st.warning("Please type a prompt first.")
   else:
-    with st.spinner(
-        "Rendering high-quality image with FLUX... Please wait."
-    ):
-      try:
-        # Set dimensions based on user choice
-        if "Landscape" in aspect_ratio:
-          w, h = 1280, 720
-        else:
-          w, h = 1024, 1024
+    # Set dimensions based on user choice
+    if "Landscape" in aspect_ratio:
+      w, h = 1280, 720
+    else:
+      w, h = 1024, 1024
 
-        # Encode prompt safely
-        encoded_prompt = urllib.parse.quote(prompt)
+    # Encode prompt safely for the URL
+    encoded_prompt = urllib.parse.quote(prompt)
 
-        # Build URL with enhanced quality parameters
-        image_url = f"https://pollinations.ai/p/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
+    # Correct updated Pollinations API endpoint format
+    image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
 
-        # Test-fetch and verify it's a real image before storing in session state
-        response = requests.get(image_url)
-        if response.status_code == 200:
-          # Verify that PIL can actually open it as an image (prevents HTML/error crashes)
-          img_check = Image.open(io.BytesIO(response.content))
-          img_check.verify()  # Validates file integrity
+    # Save to session state so it stays on screen
+    st.session_state["image_url"] = image_url
+    st.session_state["image_prompt"] = prompt
 
-          # If valid, save into session state
-          st.session_state["image_bytes"] = response.content
-          st.session_state["image_prompt"] = prompt
-        else:
-          st.error("Server returned an error. Please try again.")
-
-      except Exception as e:
-        st.error(
-            "Generation is still processing on the server or returned an"
-            " invalid format. Please click generate again!"
-        )
-
-# Display image preview and download button if successfully verified and stored
-if "image_bytes" in st.session_state:
+# Display image and download options if available
+if "image_url" in st.session_state:
   st.success("Done!")
 
-  # 1. Preview the image safely
+  # 1. Preview the image natively and smoothly
   st.image(
-      st.session_state["image_bytes"],
+      st.session_state["image_url"],
       caption=st.session_state["image_prompt"],
       use_container_width=True,
   )
 
-  # 2. Download button for the verified bytes
-  st.download_button(
-      label="📥 Download Image",
-      data=st.session_state["image_bytes"],
-      file_name="lenchxo_flux_image.jpg",
-      mime="image/jpeg",
+  # 2. Clean download action box
+  st.markdown("### Save Your Image")
+  st.markdown(
+      f"👉 **[Click Here to Open Full-Res"
+      f" Image]({st.session_state['image_url']})**"
+  )
+  st.info(
+      "Tip: Click the link above to open the clean image file in a new tab,"
+      " then right-click and select **'Save image as...'** to download it to"
+      " your device."
   )
