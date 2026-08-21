@@ -19,30 +19,13 @@ prompt = st.text_area(
     ),
 )
 
-# Optional quality settings in an expander
-with st.expander("Advanced Quality Settings"):
-  aspect_ratio = st.selectbox(
-      "Aspect Ratio", ["Square (1024x1024)", "Landscape (1280x720)"]
-  )
-  auto_enhance = st.checkbox(
-      "Auto-Enhance Prompt for Better Details", value=True
-  )
-
 if st.button("Generate Image", type="primary"):
   if not prompt.strip():
     st.warning("Please type a prompt first.")
   else:
-    # Set dimensions based on user choice
-    if "Landscape" in aspect_ratio:
-      w, h = 1280, 720
-    else:
-      w, h = 1024, 1024
-
-    # Encode prompt safely for the URL
+    # Encode prompt safely for the URL (defaulting to clean 1024x1024 with enhance enabled)
     encoded_prompt = urllib.parse.quote(prompt)
-
-    # Correct updated Pollinations API endpoint format
-    image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?model=flux&width={w}&height={h}&enhance={str(auto_enhance).lower()}"
+    image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?model=flux&width=1024&height=1024&enhance=true"
 
     # Save to session state so it stays on screen
     st.session_state["image_url"] = image_url
@@ -59,14 +42,12 @@ if "image_url" in st.session_state:
       use_container_width=True,
   )
 
-  # 2. Clean download action box
-  st.markdown("### Save Your Image")
+  # 2. Clean download instructions
   st.markdown(
       f"👉 **[Click Here to Open Full-Res"
       f" Image]({st.session_state['image_url']})**"
   )
   st.info(
-      "Tip: Click the link above to open the clean image file in a new tab,"
-      " then right-click and select **'Save image as...'** to download it to"
-      " your device."
+      "Tip: Click the link above to open the clean image file, then right-click"
+      " and select **'Save image as...'** to save it to your device."
   )
